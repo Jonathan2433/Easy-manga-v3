@@ -61,12 +61,16 @@ class Mangas
     #[ORM\ManyToMany(targetEntity: Type::class, inversedBy: 'mangas', cascade: ['persist'])]
     private Collection $themes;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'mangas_reading')]
+    private Collection $users;
+
     public function __construct()
     {
         $this->author = new ArrayCollection();
         $this->illustrator = new ArrayCollection();
         $this->genders = new ArrayCollection();
         $this->themes = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function __toString()
@@ -303,6 +307,33 @@ class Mangas
     public function removeTheme(Type $theme): self
     {
         $this->themes->removeElement($theme);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addMangasReading($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeMangasReading($this);
+        }
 
         return $this;
     }
