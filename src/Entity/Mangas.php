@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\MangasRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -46,6 +48,31 @@ class Mangas
 
     #[ORM\Column]
     private ?bool $is_categorize = null;
+
+    #[ORM\ManyToMany(targetEntity: Authors::class, inversedBy: 'mangas', cascade: ['persist'])]
+    private Collection $author;
+
+    #[ORM\ManyToMany(targetEntity: Illustrators::class, inversedBy: 'mangas', cascade: ['persist'])]
+    private Collection $illustrator;
+
+    #[ORM\ManyToMany(targetEntity: Genders::class, inversedBy: 'mangas', cascade: ['persist'])]
+    private Collection $genders;
+
+    #[ORM\ManyToMany(targetEntity: Type::class, inversedBy: 'mangas', cascade: ['persist'])]
+    private Collection $themes;
+
+    public function __construct()
+    {
+        $this->author = new ArrayCollection();
+        $this->illustrator = new ArrayCollection();
+        $this->genders = new ArrayCollection();
+        $this->themes = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->name;
+    }
 
     public function getId(): ?int
     {
@@ -180,6 +207,102 @@ class Mangas
     public function setIsCategorize(bool $is_categorize): self
     {
         $this->is_categorize = $is_categorize;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Authors>
+     */
+    public function getAuthor(): Collection
+    {
+        return $this->author;
+    }
+
+    public function addAuthor(Authors $author): self
+    {
+        if (!$this->author->contains($author)) {
+            $this->author->add($author);
+        }
+
+        return $this;
+    }
+
+    public function removeAuthor(Authors $author): self
+    {
+        $this->author->removeElement($author);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Illustrators>
+     */
+    public function getIllustrator(): Collection
+    {
+        return $this->illustrator;
+    }
+
+    public function addIllustrator(Illustrators $illustrator): self
+    {
+        if (!$this->illustrator->contains($illustrator)) {
+            $this->illustrator->add($illustrator);
+        }
+
+        return $this;
+    }
+
+    public function removeIllustrator(Illustrators $illustrator): self
+    {
+        $this->illustrator->removeElement($illustrator);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Genders>
+     */
+    public function getGenders(): Collection
+    {
+        return $this->genders;
+    }
+
+    public function addGender(Genders $gender): self
+    {
+        if (!$this->genders->contains($gender)) {
+            $this->genders->add($gender);
+        }
+
+        return $this;
+    }
+
+    public function removeGender(Genders $gender): self
+    {
+        $this->genders->removeElement($gender);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Type>
+     */
+    public function getThemes(): Collection
+    {
+        return $this->themes;
+    }
+
+    public function addTheme(Type $theme): self
+    {
+        if (!$this->themes->contains($theme)) {
+            $this->themes->add($theme);
+        }
+
+        return $this;
+    }
+
+    public function removeTheme(Type $theme): self
+    {
+        $this->themes->removeElement($theme);
 
         return $this;
     }

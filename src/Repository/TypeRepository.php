@@ -65,12 +65,10 @@ class TypeRepository extends ServiceEntityRepository
 //    }
 
     public function findOneByName($name) {
-        $result = $this->createQueryBuilder('g')
+        return $this->createQueryBuilder('g')
             ->andWhere('g.name = :name')
             ->setParameter('name', $name)
             ->getQuery()
-            ->getArrayResult();
-        $arrayCount = count($result);
-        return $arrayCount;
+            ->getOneOrNullResult();
     }
 }

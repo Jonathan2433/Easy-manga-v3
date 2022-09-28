@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AuthorsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,6 +27,19 @@ class Authors
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updated_at = null;
+
+    #[ORM\ManyToMany(targetEntity: Mangas::class, mappedBy: 'author', cascade: ['persist'])]
+    private Collection $mangas;
+
+    public function __construct()
+    {
+        $this->mangas = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->name;
+    }
 
     public function getId(): ?int
     {
@@ -75,6 +90,33 @@ class Authors
     public function setUpdatedAt(\DateTimeInterface $updated_at): self
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Mangas>
+     */
+    public function getMangas(): Collection
+    {
+        return $this->mangas;
+    }
+
+    public function addManga(Mangas $manga): self
+    {
+        if (!$this->mangas->contains($manga)) {
+            $this->mangas->add($manga);
+            $manga->addAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeManga(Mangas $manga): self
+    {
+        if ($this->mangas->removeElement($manga)) {
+            $manga->removeAuthor($this);
+        }
 
         return $this;
     }

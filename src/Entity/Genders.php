@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\GendersRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -28,6 +30,20 @@ class Genders
 
     #[ORM\Column]
     private ?bool $is_for_adult = null;
+
+    #[ORM\ManyToMany(targetEntity: Mangas::class, mappedBy: 'genders', cascade: ['persist'])]
+    private Collection $mangas;
+
+
+    public function __construct()
+    {
+        $this->mangas = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->name;
+    }
 
     public function getId(): ?int
     {
@@ -90,6 +106,34 @@ class Genders
     public function setIsForAdult(bool $is_for_adult): self
     {
         $this->is_for_adult = $is_for_adult;
+
+        return $this;
+    }
+
+
+    /**
+     * @return Collection<int, Mangas>
+     */
+    public function getMangas(): Collection
+    {
+        return $this->mangas;
+    }
+
+    public function addManga(Mangas $manga): self
+    {
+        if (!$this->mangas->contains($manga)) {
+            $this->mangas->add($manga);
+            $manga->addGender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeManga(Mangas $manga): self
+    {
+        if ($this->mangas->removeElement($manga)) {
+            $manga->removeIllustrator($this);
+        }
 
         return $this;
     }
