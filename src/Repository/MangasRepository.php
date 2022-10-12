@@ -54,6 +54,16 @@ class MangasRepository extends ServiceEntityRepository
 //        ;
 //    }
 
+    public function GetTop10(): ?array
+    {
+        $mangas = $this->createQueryBuilder('m')
+            ->setMaxResults( 10 )
+            ->getQuery()
+            ->getResult()
+        ;
+        return $mangas;
+    }
+
 //    public function findOneBySomeField($value): ?Mangas
 //    {
 //        return $this->createQueryBuilder('m')
