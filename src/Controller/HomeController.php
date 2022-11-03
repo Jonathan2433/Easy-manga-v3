@@ -28,12 +28,11 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(): Response
     {
-        $mangas = $this->mangaRepository->GetTop10();
+        $top10 = $this->mangaRepository->GetTop10();
 
-        dd($mangas);
 
         return $this->render('home/index.html.twig', [
-            'controller_name' => 'HomeController',
+            'top10' => $top10,
         ]);
     }
 }

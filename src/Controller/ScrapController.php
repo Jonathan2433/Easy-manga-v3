@@ -56,8 +56,8 @@ class ScrapController extends AbstractController
         $pages = $pagination['last_visible_page'];
 
 
-        $page = 21;
-        while ($page <= 41) {
+        $page = 0;
+        while ($page <= 10) {
             $topMangasData = $this->callApiService->getTopMangas($page);
             $topMangas = $topMangasData['data'];
 
@@ -97,8 +97,7 @@ class ScrapController extends AbstractController
                 $newManga->setUpdatedAt($createdAt);
 
                 if (!empty($manga['genres'] && !empty($manga['themes']) )) {
-
-
+                    $newManga->setIsCategorize(true);
                     foreach ($manga['genres'] as $genre) {
 
                         $genderName = $genre['name'];
@@ -110,8 +109,6 @@ class ScrapController extends AbstractController
                         } else {
                             $newGenders = new Genders();
                             $newGenders->setIsForAdult(false);
-
-                            $newManga->setIsCategorize(true);
 
                             $newGenders->addManga($newManga);
 
