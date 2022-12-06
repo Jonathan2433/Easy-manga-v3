@@ -3,20 +3,24 @@
 {% block title %}Hello HomeController!{% endblock %}
 
 {% block body %}
-    <h1 class="text-3xl font-bold underline">
-        Hello world!
-    </h1>
-    {% for manga in top10 %}
-            <h2>{{ manga.name }}</h2>
-        <p>{{ manga.id }}</p>
-        <button onclick="addToLibrary({{ manga.id }})" >Add</button>
-    {% endfor %}
+    <section class="mangas-top-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-2 md:gap-4 lg:gap-6 ">
+        {% for manga in top10 %}
+            <article class="manga bg-gray-800 rounded p-4 m-4 max-w-72">
+                <img src="{{ manga.img  }}" alt="image de couverture de {{ manga.name }}" class="w-full max-h-64">
+                <h2>{{ manga.name }}</h2>
+                <p>{{ manga.id }}</p>
+                <button onclick="addToLibrary({{ manga.id }})" >Add</button>
+            </article>
+
+        {% endfor %}
+    </section>
+
 
     <script>
 
 
-        function addToLibrary(id) {
-            fetch("/add", {
+       async function addToLibrary(id) {
+          await fetch("/add", {
                 method:"POST",
                 headers: {
                     'Accept': 'application/json',
@@ -24,6 +28,15 @@
                 },
                 body: JSON.stringify({'mangaId': id}),
             })
+              .then((res) => {
+                  console.log(res)
+                  if(res.ok){
+                      console.log('coucou')
+                  //    todo ajouté la transformation du bouton Add en OK + ajouté un bandeau manga (nom du manga) bien ajouté à votre bibliothèque
+                  //     to try masquer le manga de la liste
+                  }
+              }
+          )
         }
 
 
